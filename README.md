@@ -4,7 +4,7 @@ Create wordhunt games using integer programming! Based on original model impleme
 
 ## Example
 
-'''
+```julia
 using Wordhunt
 wordhunt(["ALI","ADA","MILO"],[:S,:E,:SE],4)
-'''
+```
