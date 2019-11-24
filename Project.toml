@@ -1,0 +1,16 @@
+name = "Wordhunt"
+uuid = "a1760a79-14ac-49f3-8e73-98d5f61fc208"
+authors = ["lhellemo "]
+version = "0.1.0"
+
+[deps]
+Cbc = "9961bab8-2fa3-5c5a-9d89-47fab24efd76"
+JuMP = "4076af6c-e467-56ae-b986-b466b2749572"
+PrettyTables = "08abe8d2-0d0c-5749-adfa-8a2ac140af0d"
+Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
