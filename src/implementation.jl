@@ -139,5 +139,6 @@ function printSol(xsol;fillrand=true,highlight=true,highlightcolor=:blue)
         end
     end
     h1 = Highlighter((data,i,j)->h[i,j], Crayon(bold = true,foreground=highlightcolor))
-    pretty_table(s;tf=borderless,noheader=true,highlighters = h1)
+    pretty_table(s;highlighters = tuple(h1),noheader=true,tf=borderless)
+    return s
 end
