@@ -3,10 +3,10 @@ const Words = ["Ada","Claire","Hugo","Idris","Julia","Karel","Mary","Max","Maya"
 
 # Tests:
 @testset "Simple hunts" begin
-    # Able to solve problem    
-    st,m = wordhunt(Words,[:E],4,false)
+    # Able to solve problem
+    st,m = wordhunt(Words;D=[:E],Gridsize=4,printres=false)
     @test st == MOI.OPTIMAL
-    st,m = wordhunt(["Anne","Anna","Arne"],[:E,:S,:SE],4,false);
+    st,m = wordhunt(["Anne","Anna","Arne"];D=[:E,:S,:SE],Gridsize=4,printres=false);
     x = JuMP.value.(m[:x])
     # Unique solution:
     @test x[1,1,'A'] ≈ 1
