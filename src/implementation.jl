@@ -1,4 +1,4 @@
-function wordhunt(Words::Array{String,1}; D = [:E,:S,:W, :N, :SE, :NE], Gridsize=7,printres=true,prefmode = 2,limit = true,optimizer=Cbc.Optimizer)
+function wordhunt(Words::Array{String,1}; D = [:E,:S,:W, :N, :SE, :NE], Gridsize=7,printres=true,prefmode = 2,limit = true,optimizer=optimizer_with_attributes(Cbc.Optimizer, MOI.Silent() => true))
 
     Maxlength = maximum(length.(Words))
     M = 1:Gridsize
