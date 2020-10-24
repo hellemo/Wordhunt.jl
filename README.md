@@ -6,5 +6,5 @@ Create wordhunt games using integer programming! Based on original model impleme
 
 ```julia
 using Wordhunt
-wordhunt(["ALI","ADA","MILO"],[:S,:E,:SE],4)
+wordhunt(["ALI","ADA","MILO"]; D=[:S,:E,:SE], Gridsize=4)
 ```
