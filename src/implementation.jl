@@ -1,15 +1,15 @@
 function wordhunt(
-    Words::Array{String,1};
+    words::Array{String,1};
     D=[:E, :S, :W, :N, :SE, :NE],
-    Gridsize=7,
+    gridsize=7,
     printres=true,
     prefmode=2,
     limit=true,
     optimizer=optimizer_with_attributes(Cbc.Optimizer, MOI.Silent() => true),
 )
-    Maxlength = maximum(length.(Words))
-    M = 1:Gridsize
-    N = uppercase.(Words)
+    Maxlength = maximum(length.(words))
+    M = 1:gridsize
+    N = uppercase.(words)
     L = unique(join(N, ""))
 
     model = Model(optimizer)
@@ -19,18 +19,18 @@ function wordhunt(
 
     # Allowed start positions for each direction in D
     for n in N, i in M, j in M, d in D
-        if (d == :E) && (j > Gridsize - length(n) + 1)
+        if (d == :E) && (j > gridsize - length(n) + 1)
             @constraint(model, y[n, i, j, d] <= 0)
-        elseif (d == :S) && (i > Gridsize - length(n) + 1)
+        elseif (d == :S) && (i > gridsize - length(n) + 1)
             @constraint(model, y[n, i, j, d] <= 0)
         elseif (d == :W) && (j < length(n))
             @constraint(model, y[n, i, j, d] <= 0)
         elseif (d == :N) && (i < length(n))
             @constraint(model, y[n, i, j, d] <= 0)
         elseif (d == :SE) &&
-               ((i > Gridsize - length(n) + 1) || (j > Gridsize - length(n) + 1))
+               ((i > gridsize - length(n) + 1) || (j > gridsize - length(n) + 1))
             @constraint(model, y[n, i, j, d] <= 0)
-        elseif (d == :NE) && ((j > Gridsize - length(n) + 1) || (i < length(n)))
+        elseif (d == :NE) && ((j > gridsize - length(n) + 1) || (i < length(n)))
             @constraint(model, y[n, i, j, d] <= 0)
         else
             set_binary(y[n, i, j, d])
@@ -77,12 +77,12 @@ function wordhunt(
 
     # Distance from a corner
     if prefmode == 2
-        euc = ones(Gridsize, Gridsize)
+        euc = ones(gridsize, gridsize)
         for i in M, j in M
-            euc[i, j] = sqrt(i^2 + j^2) / Gridsize
+            euc[i, j] = sqrt(i^2 + j^2) / gridsize
         end
     elseif prefmode == 3
-        euc = reshape(shuffle!(collect(1:(Gridsize^2))), (Gridsize, Gridsize)) ./ Gridsize^2
+        euc = reshape(shuffle!(collect(1:(gridsize^2))), (gridsize, gridsize)) ./ gridsize^2
     end
 
     # Objective function
@@ -90,7 +90,7 @@ function wordhunt(
         most_words = sum(2 * MaxLength * y[n, i, j, d] for n in N, i in M, j in M, d in D)
     elseif prefmode == 2 || prefmode == 3
         most_words = sum(
-            Gridsize * length(n) * y[n, i, j, d] for n in N, i in M, j in M, d in D
+            gridsize * length(n) * y[n, i, j, d] for n in N, i in M, j in M, d in D
         )
     else
         most_words = 0
