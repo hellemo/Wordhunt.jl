@@ -1,9 +1,9 @@
 module Wordhunt
 
-using JuMP
-using Random
 using Cbc
+using JuMP
 using PrettyTables
+using Random
 
 include("implementation.jl")
 
