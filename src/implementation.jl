@@ -115,7 +115,7 @@ function wordhunt(
     end
 
     @objective(model, Max, most_words - least_letters + 0.1 * pref)
-
+    
     optimize!(model)
 
     if printres
@@ -151,6 +151,6 @@ function printSol(xsol; fillrand=true, highlight=true, highlightcolor=:blue)
     h1 = Highlighter(
         (data, i, j) -> h[i, j], Crayon(; bold=true, foreground=highlightcolor)
     )
-    pretty_table(s; highlighters=tuple(h1), noheader=true, tf=borderless)
+    pretty_table(s; highlighters=tuple(h1), noheader=true, tf=tf_borderless)
     return s
 end
