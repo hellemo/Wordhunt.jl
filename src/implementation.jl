@@ -7,6 +7,31 @@ function wordhunt(
     limit=true,
     optimizer=optimizer_with_attributes(Cbc.Optimizer, MOI.Silent() => true),
 )
+
+    model = wordhunt_model(words;D,gridsize,prefmode,limit,optimizer)
+    optimize!(model)
+
+    if printres
+        # Show status and objective value
+        @debug JuMP.termination_status(model)
+        @debug JuMP.objective_value(model)
+        println()
+
+        # Print solution to console
+        printSol(model[:x])
+    end
+
+    return JuMP.termination_status(model), model
+end
+
+function wordhunt_model(
+    words::Array{String,1};
+    D=[:E, :S, :W, :N, :SE, :NE],
+    gridsize=7,
+    prefmode=2,
+    limit=true,
+    optimizer=optimizer_with_attributes(Cbc.Optimizer, MOI.Silent() => true),
+)
     Maxlength = maximum(length.(words))
     M = 1:gridsize
     N = uppercase.(words)
@@ -115,21 +140,9 @@ function wordhunt(
     end
 
     @objective(model, Max, most_words - least_letters + 0.1 * pref)
-    
-    optimize!(model)
-
-    if printres
-        # Show status and objective value
-        print(JuMP.termination_status(model), "\t")
-        println(JuMP.objective_value(model))
-        println()
-
-        # Print solution to console
-        printSol(x)
-    end
-
-    return JuMP.termination_status(model), model
+   return model
 end
+
 
 function printSol(xsol; fillrand=true, highlight=true, highlightcolor=:blue)
     x = JuMP.value.(xsol)
