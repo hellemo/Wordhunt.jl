@@ -39,8 +39,8 @@ function wordhunt_model(
 
     model = Model(optimizer)
 
-    @variable(model, x[M, M, L], Bin)  # Letter in location M,M
-    @variable(model, y[N, M, M, D])    # Word in location M,M in direction D
+    @variable(model, x[M, M, L] <=1, Bin)  # Letter in location M,M
+    @variable(model, y[N, M, M, D])        # Word in location M,M in direction D
 
     # Allowed start positions for each direction in D
     for n in N, i in M, j in M, d in D
