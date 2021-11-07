@@ -1,6 +1,6 @@
 module Wordhunt
 
-using Cbc
+using HiGHS
 using JuMP
 using PrettyTables
 using Random

@@ -5,7 +5,7 @@ function wordhunt(
     printres=true,
     prefmode=2,
     limit=true,
-    optimizer=optimizer_with_attributes(Cbc.Optimizer, MOI.Silent() => true),
+    optimizer=optimizer_with_attributes(HiGHS.Optimizer, MOI.Silent() => true),
 )
 
     model = wordhunt_model(words;D,gridsize,prefmode,limit,optimizer)
@@ -30,7 +30,7 @@ function wordhunt_model(
     gridsize=7,
     prefmode=2,
     limit=true,
-    optimizer=optimizer_with_attributes(Cbc.Optimizer, MOI.Silent() => true),
+    optimizer=optimizer_with_attributes(HiGHS.Optimizer, MOI.Silent() => true),
 )
     Maxlength = maximum(length.(words))
     M = 1:gridsize
