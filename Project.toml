@@ -1,7 +1,7 @@
 name = "Wordhunt"
 uuid = "a1760a79-14ac-49f3-8e73-98d5f61fc208"
 authors = ["lhellemo "]
-version = "0.2.2"
+version = "0.2.3"
 
 [deps]
 HiGHS = "87dc4568-4c63-4d18-b0c0-bb2238e4078b"
@@ -11,7 +11,7 @@ Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 
 [compat]
 HiGHS = "1"
-JuMP = "^0.23, 1"
+JuMP = "1"
 PrettyTables = "~1"
 julia = "^1.6"
 

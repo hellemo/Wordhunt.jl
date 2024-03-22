@@ -1,14 +1,14 @@
 function wordhunt(
     words::Array{String,1};
-    D=[:E, :S, :W, :N, :SE, :NE],
-    gridsize=7,
-    printres=true,
-    prefmode=2,
-    limit=true,
-    optimizer=optimizer_with_attributes(HiGHS.Optimizer, MOI.Silent() => true),
+    D = [:E, :S, :W, :N, :SE, :NE],
+    gridsize = 7,
+    printres = true,
+    prefmode = 2,
+    limit = true,
+    optimizer = optimizer_with_attributes(HiGHS.Optimizer, MOI.Silent() => true),
 )
 
-    model = wordhunt_model(words;D,gridsize,prefmode,limit,optimizer)
+    model = wordhunt_model(words; D, gridsize, prefmode, limit, optimizer)
     optimize!(model)
 
     if printres
@@ -26,20 +26,20 @@ end
 
 function wordhunt_model(
     words::Array{String,1};
-    D=[:E, :S, :W, :N, :SE, :NE],
-    gridsize=7,
-    prefmode=2,
-    limit=true,
-    optimizer=optimizer_with_attributes(HiGHS.Optimizer, MOI.Silent() => true),
+    D = [:E, :S, :W, :N, :SE, :NE],
+    gridsize = 7,
+    prefmode = 2,
+    limit = true,
+    optimizer = optimizer_with_attributes(HiGHS.Optimizer, MOI.Silent() => true),
 )
-    Maxlength = maximum(length.(words))
+    MaxLength = maximum(length.(words))
     M = 1:gridsize
-    N = uppercase.(words)
-    L = unique(join(N, ""))
+    N = collect.(uppercase.(words))
+    L = collect(unique(join(N, "")))
 
     model = Model(optimizer)
 
-    @variable(model, x[M, M, L] <=1, Bin)  # Letter in location M,M
+    @variable(model, x[M, M, L] <= 1, Bin)  # Letter in location M,M
     @variable(model, y[N, M, M, D])        # Word in location M,M in direction D
 
     # Allowed start positions for each direction in D
@@ -76,7 +76,7 @@ function wordhunt_model(
     for n in N, i in M, j in M, d in D
         ii = i
         jj = j
-        for l in 1:length(n)
+        for l in eachindex(n)
             if ii in M && jj in M
                 @constraint(model, x[ii, jj, n[l]] >= y[n, i, j, d])
                 if d == :E
@@ -114,9 +114,8 @@ function wordhunt_model(
     if prefmode == 1
         most_words = sum(2 * MaxLength * y[n, i, j, d] for n in N, i in M, j in M, d in D)
     elseif prefmode == 2 || prefmode == 3
-        most_words = sum(
-            gridsize * length(n) * y[n, i, j, d] for n in N, i in M, j in M, d in D
-        )
+        most_words =
+            sum(gridsize * length(n) * y[n, i, j, d] for n in N, i in M, j in M, d in D)
     else
         most_words = 0
     end
@@ -126,9 +125,8 @@ function wordhunt_model(
     if prefmode == 1 && !isempty(intersect(P, D))
         pref = sum(y[n, i, j, d] for n in N, i in M, j in M, d in intersect(P, D))
     elseif prefmode == 2 && !isempty(intersect(P, D))
-        pref = sum(
-            euc[i, j] * y[n, i, j, d] for n in N, i in M, j in M, d in intersect(P, D)
-        )
+        pref =
+            sum(euc[i, j] * y[n, i, j, d] for n in N, i in M, j in M, d in intersect(P, D))
     else
         pref = 0
     end
@@ -140,30 +138,31 @@ function wordhunt_model(
     end
 
     @objective(model, Max, most_words - least_letters + 0.1 * pref)
-   return model
+    return model
 end
 
 
-function printSol(xsol; fillrand=true, highlight=true, highlightcolor=:blue)
+function printSol(xsol; fillrand = true, highlight = true, highlightcolor = :blue)
     x = JuMP.value.(xsol)
     N = size(xsol, 1)
     Random.seed!(42)
     letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     h = fill(false, (N, N))       # Highlight solution
     if fillrand
-        s = [letters[rand(1:end)] for i in 1:N, j in 1:N]
+        s = [letters[rand(1:end)] for i = 1:N, j = 1:N]
     else
         s = fill(' ', (N, N))
     end
-    for i in 1:N, j in 1:N, l in axes(x)[3]
+    for i = 1:N, j = 1:N, l in axes(x)[3]
         if x[i, j, l] > 0.5
             s[i, j] = l
             h[i, j] = true
         end
     end
     h1 = Highlighter(
-        (data, i, j) -> h[i, j], Crayon(; bold=true, foreground=highlightcolor)
+        (data, i, j) -> h[i, j],
+        Crayon(; bold = true, foreground = highlightcolor),
     )
-    pretty_table(s; highlighters=tuple(h1), noheader=true, tf=tf_borderless)
+    pretty_table(s; highlighters = tuple(h1), noheader = true, tf = tf_borderless)
     return s
 end
