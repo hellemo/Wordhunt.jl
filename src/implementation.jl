@@ -32,10 +32,10 @@ function wordhunt_model(
     limit=true,
     optimizer=optimizer_with_attributes(HiGHS.Optimizer, MOI.Silent() => true),
 )
-    Maxlength = maximum(length.(words))
+    MaxLength = maximum(length.(words))
     M = 1:gridsize
-    N = uppercase.(words)
-    L = unique(join(N, ""))
+    N = collect.(uppercase.(words))
+    L = collect(unique(join(N, "")))
 
     model = Model(optimizer)
 
@@ -76,7 +76,7 @@ function wordhunt_model(
     for n in N, i in M, j in M, d in D
         ii = i
         jj = j
-        for l in 1:length(n)
+        for l in eachindex(n)
             if ii in M && jj in M
                 @constraint(model, x[ii, jj, n[l]] >= y[n, i, j, d])
                 if d == :E
