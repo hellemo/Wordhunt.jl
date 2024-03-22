@@ -1,5 +1,5 @@
 using Test
-using Cbc
+using HiGHS
 using JuMP
 using Wordhunt
 
